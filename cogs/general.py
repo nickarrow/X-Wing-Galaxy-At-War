@@ -20,7 +20,7 @@ class General(commands.Cog):
     @commands.check(is_team_member)
     async def clear(self, ctx, amount=5):
         if amount <= 0:
-            raise ValueError(f'**Why are you trying to delete "{amount}" messages?**')
+            raise ValueError(f'**You are really trying to delete "{amount}" messages? Really?**')
         await ctx.channel.purge(limit=amount + 1)
         await ctx.send(content=f'You have deleted {amount} messages!', delete_after=3.0)
 
