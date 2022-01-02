@@ -8,7 +8,7 @@ import main
 
 
 async def is_team_member(ctx):
-    return list(member for member in (await ctx.bot.application_info()).team.members if not member.id == ctx.message.author.id)
+    return list(member for member in (await ctx.bot.application_info()).team.members if member.id == ctx.message.author.id)
 
 
 class General(commands.Cog):
@@ -16,11 +16,11 @@ class General(commands.Cog):
         self.client = client
 
 
-    @commands.command(hidden=True)
+    @commands.command()
     @commands.check(is_team_member)
     async def clear(self, ctx, amount=5):
         if amount <= 0:
-            raise ValueError(f'**You are really trying to delete "{amount}" messages? Really?**')
+            raise ValueError(f'''You can't delete {amount} messages.''')
         await ctx.channel.purge(limit=amount + 1)
         await ctx.send(content=f'You have deleted {amount} messages!', delete_after=3.0)
 

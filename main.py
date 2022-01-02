@@ -10,6 +10,9 @@ import cogs.help
 
 logging.basicConfig(level=logging.INFO)
 
+intents = discord.Intents.default()
+intents.members = True
+
 
 def getPre(bot, message):
     if not message.guild:
@@ -24,7 +27,7 @@ def getPre(bot, message):
     return commands.when_mentioned_or(prefix, prefix + " ")(bot, message)
 
 
-client = commands.Bot(command_prefix=getPre, case_insensitive=True, help_command=cogs.help.HelpCommand(),
+client = commands.Bot(command_prefix=getPre, case_insensitive=True, intents=intents, help_command=cogs.help.HelpCommand(show_hidden=False),
                       description="This bot allows for players to submit match results within Discord by "
                                   "using the !submit command. The results are then confirmed by the players "
                                   "of the match. After a match result is submitted, players use reactions "
@@ -58,15 +61,17 @@ async def setPrefix(ctx, *, prefix):
 
 
 async def is_team_member(ctx):
-    return list(member for member in (await ctx.bot.application_info()).team.members if not member.id == ctx.message.author.id)
+    return list(member for member in (await ctx.bot.application_info()).team.members if member.id == ctx.message.author.id)
 
 
-@client.command()
+@client.command(hidden=True)
 @commands.check(is_team_member)
-async def reloadCog(ctx, cog: str):
-    client.reload_extension(f"cog.{cog}")
-    print(f"Reloading cog {cog}")
-    await ctx.send(f"Reloaded cog {cog}", delete_after=3.0)
+async def load(ctx, cog: str):
+    try:
+        client.reload_extension(f"cogs.{cog.lower()}")
+    except:
+        client.load_extension(f'cogs.{cog.lower()}')
+    await ctx.send(f"Loaded cog {cog}", delete_after=3.0)
 
 
 

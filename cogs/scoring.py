@@ -16,25 +16,26 @@ class Scoring(commands.Cog):
         self.factions = sheets.Sheet.get_factions()
         self.planets = sheets.Sheet.get_planets()
 
-    @commands.command()
+    @commands.command(brief=f"Submit your results")
     @commands.guild_only()
-    async def submit(self, ctx: commands.Context, player1: str, player1points: int, vs: str, player2: str, player2points: int):
+    async def submit(self, ctx: commands.Context, player1: str, player1points: int, vs: str, player2: str,
+                     player2points: int):
 
         self.client.get_command(
             "submit").help = f"""Use: "{main.getPre(self.client, ctx)[2]}submit <@player1> <player1points> vs <@player2> <player2points>" to submit your game."""
 
-        try:
-            player1 = ctx.guild.get_member(int("".join(re.split("[^0-9]", player1))))
-            player2 = ctx.guild.get_member(int("".join(re.split("[^0-9]", player2))))
-            if not player1 or not player2:
-                raise ValueError
-        except ValueError:
+
+        player1 = ctx.guild.get_member(int("".join(re.split("[^0-9]", player1))))
+        player2 = ctx.guild.get_member(int("".join(re.split("[^0-9]", player2))))
+
+        if not player1 or not player2:
             raise ValueError(
                 f"Wrong Form. Mention both players: {main.getPre(self.client, ctx)[2]}submit <@player1> <player1points> vs <@player2> <player2points>")
 
         if vs not in ("vs", "v.", "|", "vs.", "versus"):
             raise ValueError(
                 f"Wrong Form. Use: {main.getPre(self.client, ctx)[2]}submit <@player1> <player1points> vs <@player2> <player2points>")
+
 
         if player1.id == player2.id:
             raise ValueError(f'Duh. You have to ping different Users.')
